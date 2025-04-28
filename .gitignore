@@ -1,0 +1,6 @@
+.venv/
+venv/
+__pycache__/
+*.cpython-311.pyc
+.Spot-proxmox.code-workspace
+get-pip.py

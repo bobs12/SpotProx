@@ -1,0 +1,41 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>Spot VM Manager</title>
+</head>
+<body>
+  <h1>🔧 Spot VM Dashboard</h1>
+
+  <h2>➕ Створити нову машину</h2>
+  <form action="/create" method="post">
+    Назва: <input type="text" name="name"><br>
+    <br>
+    Шаблон: <input type="text" name="template"><br>
+    <br>
+    Початок (HH:MM): <input type="text" name="start_time"><br>
+    <br>
+    Кінець (HH:MM): <input type="text" name="end_time"><br>
+    <button type="submit">Створити</button>
+  </form>
+
+  <h2>💻 Активні машини</h2>
+  <table border="1">
+    <tr><th>ID</th><th>Назва</th><th>Час</th><th>Статус</th><th>Дії</th></tr>
+    {% for vm in instances %}
+    <tr>
+      <td>{{ vm.vmid }}</td>
+      <td>{{ vm.name }}</td>
+      <td>{{ vm.start_time }} – {{ vm.end_time }}</td>
+      <td>{{ vm.status }}</td>
+      <td>
+        <form action="/start/{{ vm.vmid }}" method="post" style="display:inline;"><button>▶️</button></form>
+        <form action="/stop/{{ vm.vmid }}" method="post" style="display:inline;"><button>⏹</button></form>
+        <form action="/delete/{{ vm.vmid }}" method="post" style="display:inline;"><button>🗑</button></form>
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+</body>
+</html>

@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SpotProx - Spot VM Manager</title>
+  <style>
+    :root {
+      --aws-dark-bg: #0f1b2a;
+      --aws-dark-header: #232f3e;
+      --aws-dark-panel: #1a2332;
+      --aws-dark-element: #2a3a51;
+      --aws-dark-border: #3a4a61;
+      --aws-accent-blue: #0099e0;
+      --aws-accent-blue-hover: #33b5e5;
+      --aws-button-orange: #ff9900;
+      --aws-button-orange-hover: #ffac33;
+      --aws-text: #e6e6e6;
+      --aws-text-secondary: #aaaaaa;
+      --aws-danger: #d13212;
+      --aws-success: #1ebc30;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Amazon Ember', 'Helvetica Neue', Arial, sans-serif;
+    }
+    
+    body {
+      background-color: var(--aws-dark-bg);
+      color: var(--aws-text);
+      padding: 20px;
+      line-height: 1.5;
+    }
+    
+    header {
+      background-color: var(--aws-dark-header);
+      color: white;
+      padding: 15px 20px;
+      margin-bottom: 20px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      border-left: 4px solid var(--aws-button-orange);
+    }
+    
+    header h1 {
+      font-size: 1.5rem;
+      font-weight: 500;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .card {
+      background-color: var(--aws-dark-panel);
+      border-radius: 6px;
+      border: 1px solid var(--aws-dark-border);
+      margin-bottom: 20px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    }
+    
+    .card-header {
+      background-color: var(--aws-dark-element);
+      padding: 12px 15px;
+      border-bottom: 1px solid var(--aws-dark-border);
+      font-size: 1.1rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      border-top-left-radius: 6px;
+      border-top-right-radius: 6px;
+    }
+    
+    .card-body {
+      padding: 20px;
+    }
+    
+    form {
+      display: grid;
+      grid-template-columns: 150px 1fr;
+      gap: 15px;
+      align-items: center;
+    }
+    
+    label {
+      font-weight: 500;
+      margin-bottom: 5px;
+      color: var(--aws-text);
+    }
+    
+    input[type="text"] {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid var(--aws-dark-border);
+      border-radius: 4px;
+      font-size: 14px;
+      background-color: var(--aws-dark-element);
+      color: var(--aws-text);
+    }
+    
+    input[type="text"]::placeholder {
+      color: var(--aws-text-secondary);
+      opacity: 0.7;
+    }
+    
+    input[type="text"]:focus {
+      outline: none;
+      border-color: var(--aws-accent-blue);
+      box-shadow: 0 0 0 2px rgba(0, 153, 224, 0.3);
+    }
+    
+    button {
+      background-color: var(--aws-button-orange);
+      color: #0f1b2a;
+      border: none;
+      border-radius: 4px;
+      padding: 8px 15px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background-color 0.2s, transform 0.1s;
+    }
+    
+    button:hover {
+      background-color: var(--aws-button-orange-hover);
+      transform: translateY(-1px);
+    }
+    
+    button:active {
+      transform: translateY(0);
+    }
+    
+    .aws-btn-primary {
+      background-color: var(--aws-accent-blue);
+      color: white;
+    }
+    
+    .aws-btn-primary:hover {
+      background-color: var(--aws-accent-blue-hover);
+    }
+    
+    .aws-btn-danger {
+      background-color: var(--aws-danger);
+      color: white;
+    }
+    
+    .aws-btn-danger:hover {
+      background-color: #e63f1b;
+    }
+    
+    .button-group {
+      grid-column: 2;
+      text-align: right;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
+    th {
+      background-color: var(--aws-dark-element);
+      text-align: left;
+      padding: 10px;
+      font-weight: 500;
+      border-bottom: 2px solid var(--aws-dark-border);
+      color: var(--aws-text);
+    }
+    
+    td {
+      padding: 10px;
+      border-bottom: 1px solid var(--aws-dark-border);
+    }
+    
+    tr:hover {
+      background-color: rgba(0, 153, 224, 0.1);
+    }
+    
+    .action-buttons form {
+      display: inline;
+    }
+    
+    .action-buttons button {
+      padding: 4px 8px;
+      margin-right: 5px;
+      font-size: 12px;
+    }
+    
+    .status-running {
+      color: var(--aws-success);
+    }
+    
+    .status-stopped {
+      color: var(--aws-danger);
+    }
+    
+    .icon {
+      margin-right: 10px;
+      font-size: 1.2rem;
+    }
+    
+    /* Гладкі переходи для кращого візуального ефекту */
+    .card, button, input {
+      transition: all 0.2s ease;
+    }
+    
+    /* Підсвічування для карток при наведенні */
+    .card:hover {
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🔧 SpotProx - Spot VM Manager</h1>
+    </header>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="icon">➕</span> Створити нову машину
+      </div>
+      <div class="card-body">
+        <form action="/create" method="post">
+          <label for="name">Назва:</label>
+          <input type="text" id="name" name="name" placeholder="Введіть назву VM">
+          
+          <label for="template">Шаблон:</label>
+          <input type="text" id="template" name="template" placeholder="Введіть назву шаблону">
+          
+          <label for="start_time">Початок (HH:MM):</label>
+          <input type="text" id="start_time" name="start_time" placeholder="Наприклад: 09:00">
+          
+          <label for="end_time">Кінець (HH:MM):</label>
+          <input type="text" id="end_time" name="end_time" placeholder="Наприклад: 17:00">
+          
+          <div></div>
+          <div class="button-group">
+            <button type="submit" class="aws-btn-primary">Створити VM</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="icon">💻</span> Активні машини
+      </div>
+      <div class="card-body">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Назва</th>
+              <th>Час</th>
+              <th>Статус</th>
+              <th>Дії</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for vm in instances %}
+            <tr>
+              <td>{{ vm.vmid }}</td>
+              <td>{{ vm.name }}</td>
+              <td>{{ vm.start_time }} – {{ vm.end_time }}</td>
+              <td class="{% if vm.status == 'running' %}status-running{% elif vm.status == 'stopped' %}status-stopped{% endif %}">{{ vm.status }}</td>
+              <td class="action-buttons">
+                <form action="/start/{{ vm.vmid }}" method="post" style="display:inline;">
+                  <button class="aws-btn-primary">▶️</button>
+                </form>
+                <form action="/stop/{{ vm.vmid }}" method="post" style="display:inline;">
+                  <button>⏹</button>
+                </form>
+                <form action="/delete/{{ vm.vmid }}" method="post" style="display:inline;">
+                  <button class="aws-btn-danger">🗑</button>
+                </form>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
