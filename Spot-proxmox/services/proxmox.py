@@ -8,11 +8,13 @@ import json
 import time
 
 
-proxmox = ProxmoxAPI(PROXMOX_HOST, user=PROXMOX_USER, password=PROXMOX_PASS, verify_ssl=False)
+proxmox = None #ProxmoxAPI(PROXMOX_HOST, user=PROXMOX_USER, password=PROXMOX_PASS, verify_ssl=False)
 
 def get_proxmox():
+    if proxmox is None:
+        print("⚠️ Proxmox connection is not available.")
+        return None
     return proxmox
-
 
 def clone_vm(source_vm_id, target_vm_id, target_node):
     """

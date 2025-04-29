@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SpotProx - Dashboard</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <style>
+    :root {
+      --aws-dark-bg: #0f1b2a;
+      --aws-dark-header: #232f3e;
+      --aws-dark-panel: #1a2332;
+      --aws-dark-element: #2a3a51;
+      --aws-dark-border: #3a4a61;
+      --aws-accent-blue: #0099e0;
+      --aws-accent-blue-hover: #33b5e5;
+      --aws-button-orange: #ff9900;
+      --aws-button-orange-hover: #ffac33;
+      --aws-text: #e6e6e6;
+      --aws-text-secondary: #aaaaaa;
+      --aws-danger: #d13212;
+      --aws-success: #1ebc30;
+    }
+    body {
+      background-color: var(--aws-dark-bg);
+      color: var(--aws-text);
+      font-family: 'Amazon Ember', 'Helvetica Neue', Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+    .dashboard {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 20px;
+    }
+    .card {
+      background-color: var(--aws-dark-panel);
+      border-radius: 8px;
+      border: 1px solid var(--aws-dark-border);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      padding: 20px;
+    }
+    .card h2 {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+      color: var(--aws-accent-blue);
+    }
+    .service-link {
+      display: block;
+      margin: 8px 0;
+      color: var(--aws-text);
+      text-decoration: none;
+      padding: 8px;
+      background-color: var(--aws-dark-element);
+      border-radius: 4px;
+      transition: background-color 0.2s;
+    }
+    .service-link:hover {
+      background-color: var(--aws-accent-blue-hover);
+      color: white;
+    }
+    .stats {
+      background-color: var(--aws-dark-element);
+      padding: 10px;
+      border-radius: 4px;
+      margin-top: 10px;
+    }
+    .stat-item {
+      margin-bottom: 10px;
+    }
+    header {
+      background-color: var(--aws-dark-header);
+      padding: 15px;
+      margin-bottom: 20px;
+      border-left: 4px solid var(--aws-button-orange);
+      border-radius: 6px;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 1.5rem;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+<header>
+  <h1>🏠 SpotProx - Dashboard</h1>
+</header>
+<div class="dashboard">
+  <div class="card">
+    <h2>🔗 Сервіси</h2>
+    <a href="/spot" class="service-link">🚀 Spot VM Manager</a>
+    <a href="/networks" class="service-link">🌐 Network Manager</a>
+    <a href="/storage" class="service-link">🗄️ Storage Management (Coming Soon)</a>
+    <a href="#" class="service-link">🖥️ VM Management (Coming Soon)</a>
+    <a href="#" class="service-link">⚖️ Load Balancer (Coming Soon)</a>
+  </div>
+
+  <div class="card">
+    <h2>📈 Статистика кластера</h2>
+    <div class="stats">
+      <div class="stat-item">Всього машин: <strong>{{ total_vms }}</strong></div>
+      <div class="stat-item">Активних машин: <strong>{{ running_vms }}</strong></div>
+      <div class="stat-item">Зупинених машин: <strong>{{ stopped_vms }}</strong></div>
+      <div class="stat-item">Завантаження CPU: <strong>{{ cluster_cpu_usage }}%</strong></div>
+      <div class="stat-item">Завантаження RAM: <strong>{{ cluster_ram_usage }}%</strong></div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
