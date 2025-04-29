@@ -1,0 +1,19 @@
+version: "3.9"
+services:
+  app:
+    build: ./main
+    ports:
+      - "5000:5000"
+    networks:
+      - spotnet
+
+  spot-service:
+    build: ./spot
+    ports:
+      - "5001:5001"
+    networks:
+      - spotnet
+
+networks:
+  spotnet:
+    driver: bridge

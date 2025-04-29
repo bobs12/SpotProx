@@ -34,13 +34,24 @@ def clone_vm(source_vm_id, target_vm_id, target_node):
     except Exception as e:
         print(f"Error cloning VM: {e}")
 
-def list_vms():
-    proxmox = get_proxmox()
-    try:
-        return proxmox.nodes(PROXMOX_NODE).qemu.get()
-    except Exception as e:
-        print(f"Error listing VMs: {e}")
-        return []
+@app.route("/list", methods=["GET"])
+def list_spot_vms():
+    instances = load_instances()  # або get_instances_with_live_status() якщо з live-статусом
+    result = []
+
+    for vm_id, data in instances.items():
+        item = {
+            "vmid": vm_id,
+            "name": data["name"],
+            "template": data["template"],
+            "duration": data["duration"],
+            "start_time": data["start_time"],
+            "end_time": data["end_time"],
+            "status": data.get("status", "невідомо")  # якщо є
+        }
+        result.append(item)
+
+    return jsonify(result)
     
 def node_list():
     """
@@ -52,7 +63,7 @@ def node_list():
     except Exception as e:
         print(f"Error getting node list: {e}")
         return []
-    
+  
 def create_vm(vm_id, vm_name, vm_template):
     """
     Create a new VM from a template.
@@ -203,14 +214,19 @@ def load_instances():
     except Exception as e:
         print(f"⚠️ Error loading instances: {e}")
         return {}
-    
+
+@app.route("/status", methods=["GET"])
 def get_instances_with_live_status():
     proxmox = get_proxmox()
 
-    with open("instances.json", "r") as f:
-        data = json.load(f)
-
     instances = []
+
+    try:
+        with open("instances.json", "r") as f:
+            data = json.load(f)
+    except Exception as e:
+        print(f"⚠️ Failed to load instances.json: {e}")
+        return jsonify([]), 500
 
     for vmid_str, info in data.items():
         vmid = int(vmid_str)
@@ -224,8 +240,8 @@ def get_instances_with_live_status():
             instance["status"] = f"⚠️ {e}"
 
         instances.append(instance)
-    time.sleep(5)
-    return instances
+
+    return jsonify(instances)
 
 @app.route("/health", methods=["GET"])
 def healthcheck():

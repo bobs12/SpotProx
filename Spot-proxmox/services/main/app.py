@@ -1,43 +1,36 @@
 
 import threading
 from flask import Flask, render_template, request, redirect, url_for
-from services.spot.spot import spot_vm,load_instances, manage_power_from_schedule, delete_vm, load_instances, get_instances_with_live_status
+import requests
+#from services.spot.spot import spot_vm,load_instances, manage_power_from_schedule, delete_vm, load_instances, get_instances_with_live_status
 
 app = Flask(__name__)
 
-threading.Thread(
-    target=manage_power_from_schedule,
-    args=("instances.json", "node3"), 
-    daemon=True
-).start()
-
-# threading.Thread(
-#     target=get_instances_with_live_status,
-#     args=(), 
-#     daemon=True
-# ).start()
-
 @app.route("/")
+def main():
+    return render_template("main.html")
+
+@app.route("/networks")
+def network():
+    return render_template("network.html")
+
+@app.route("/spot")
 def index():
-    raw_data = load_instances()
-    instances = []
-    for vm_id, data in raw_data.items():
-        instance = {
-            "id": vm_id,
-            "name": data["name"],
-            "template": data["template"],
-            "duration": data["duration"],
-            "start_time": data["start_time"],
-            "end_time": data["end_time"]
-        }
-        instances.append(instance)
-        instances = get_instances_with_live_status()
+    try:
+        response = requests.get("http://spot-service:5001/list")
+        response.raise_for_status()
+        instances = response.json()
+    except Exception as e:
+        print(f"⚠️ Failed to get instances from spot-service: {e}")
+        instances = []
+
     return render_template("darktheme.html", instances=instances)
+
    
 @app.route("/create", methods=["POST"])
 def create():
     name = request.form["name"]
-    #id = request.form["id"]
+
     template = int(request.form["template"])
     start_time = request.form["start_time"]
     end_time = request.form["end_time"]
@@ -73,7 +66,15 @@ def delete(vmid):
 
 @app.route("/status/<int:vmid>", methods=["GET"])
 def status(vmid):
-    vm_status()
+    try:
+        res = requests.get(f"http://spot-service:5001/status/{vmid}")
+        res.raise_for_status()
+        status_info = res.json()
+        print(f"Статус VM {vmid}: {status_info}")
+    except requests.exceptions.RequestException as e:
+        print(f"⚠️ Error getting status for VM {vmid}: {e}")
+        return "Failed to get VM status", 500
+
     return redirect(url_for("index"))
 
 @app.route("/health", methods=["GET"])
