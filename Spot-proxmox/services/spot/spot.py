@@ -1,7 +1,8 @@
 
+from flask import Flask, request, jsonify
 from proxmoxer import ProxmoxAPI
 from config import PROXMOX_HOST, PROXMOX_USER, PROXMOX_PASS, PROXMOX_NODE
-from utils.storage import load_instances, save_instances
+from storage import load_instances, save_instances
 import uuid
 from datetime import datetime, timedelta, timezone
 import json
@@ -9,6 +10,8 @@ import time
 
 
 proxmox = None #ProxmoxAPI(PROXMOX_HOST, user=PROXMOX_USER, password=PROXMOX_PASS, verify_ssl=False)
+app = Flask(__name__)
+
 
 def get_proxmox():
     if proxmox is None:
@@ -90,31 +93,53 @@ def delete_vm(vm_id):
     except Exception as e:
         print(f"Error deleting VM: {e}")
 
+@app.route("/create", methods=["POST"])
+def create_spot_vm():
+    data = request.get_json()
+
+    # Витягуємо дані
+    vm_id = data["name"]
+    vm_name = data["name"]
+    vm_template = data["template"]
+    start_time = data["start_time"]
+    end_time = data["end_time"]
+    duration = 1  # Поки що ставимо фіксовано
+
+    # Викликаємо внутрішню функцію
+    result = spot_vm(vm_id, vm_name, vm_template, duration, start_time, end_time)
+
+    if result is None:
+        return jsonify({"status": "error"}), 500
+    else:
+        return jsonify({"status": "created", "vmid": vm_id}), 201
+
+
 def spot_vm(vm_id: int, vm_name: str, vm_template: int, duration: int, start_time: str, end_time: str):
     proxmox = get_proxmox()
-    
-    
+    if proxmox is None:
+        print("Proxmox not connected.")
+        return None
+
     try:
-        proxmox.nodes(PROXMOX_NODE).qemu(vm_template).clone.create(
-            newid=vm_name,
-            name=vm_id,
-            #full=True
+        proxmox.nodes("your-node-name").qemu(vm_template).clone.create(
+            newid=vm_id,
+            name=vm_name
         )
+        print(f"Created Spot VM {vm_name} from template {vm_template}")
     except Exception as e:
-        # Handle the error
         print(f"Error creating spot instance: {e}")
         return None
-    instance = load_instances()
-    instance[vm_id] = {
+
+    # Завантаження і збереження конфігурації
+    instances = load_instances()
+    instances[str(vm_id)] = {
         "name": vm_name,
         "template": vm_template,
         "duration": duration,
         "start_time": start_time,
         "end_time": end_time,
     }
-
-    config = instance.get(vm_id)
-    save_instances(instance)
+    save_instances(instances)
 
     return vm_id
 
@@ -201,3 +226,10 @@ def get_instances_with_live_status():
         instances.append(instance)
     time.sleep(5)
     return instances
+
+@app.route("/health", methods=["GET"])
+def healthcheck():
+    return jsonify({"status": "200"}), 200
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5001)

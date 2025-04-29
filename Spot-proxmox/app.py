@@ -1,7 +1,7 @@
 
 import threading
 from flask import Flask, render_template, request, redirect, url_for
-from services.proxmox import spot_vm,load_instances, manage_power_from_schedule, delete_vm, load_instances, get_instances_with_live_status
+from services.spot.spot import spot_vm,load_instances, manage_power_from_schedule, delete_vm, load_instances, get_instances_with_live_status
 
 app = Flask(__name__)
 
@@ -41,7 +41,19 @@ def create():
     template = int(request.form["template"])
     start_time = request.form["start_time"]
     end_time = request.form["end_time"]
-    spot_vm(vm_id=name,vm_name=name,vm_template=template, start_time=start_time, end_time=end_time,duration=1)
+    data = {
+        "name": name,
+        "template": template,
+        "start_time": start_time,
+        "end_time": end_time
+    }
+    try:
+            res = requests.post("http://spot-service:5001/create", json=data)
+            res.raise_for_status()  # якщо помилка, підніме виключення
+    except requests.exceptions.RequestException as e:
+            print(f"Error sending create request: {e}")
+            return "Failed to create VM", 500
+    #spot_vm(vm_id=name,vm_name=name,vm_template=template, start_time=start_time, end_time=end_time,duration=1)
     return redirect(url_for("index"))
 
 @app.route("/start/<int:vmid>", methods=["POST"])
@@ -64,11 +76,13 @@ def status(vmid):
     vm_status()
     return redirect(url_for("index"))
 
+@app.route("/health", methods=["GET"])
+def healthcheck():
+    return jsonify({"status": "200"}), 200
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
-    vm_status()
+    app.run(host="0.0.0.0", port=5000)
 
 
 
