@@ -1,0 +1,161 @@
+
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Health Check Status</title>
+  <style>
+    :root {
+      --aws-dark-bg: #0f1b2a;
+      --aws-dark-header: #232f3e;
+      --aws-dark-panel: #1a2332;
+      --aws-dark-element: #2a3a51;
+      --aws-dark-border: #3a4a61;
+      --aws-accent-blue: #0099e0;
+      --aws-button-orange: #ff9900;
+      --aws-text: #e6e6e6;
+      --aws-text-secondary: #aaaaaa;
+      --aws-success: #1ebc30;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Amazon Ember', 'Helvetica Neue', Arial, sans-serif;
+    }
+    
+    body {
+      background-color: var(--aws-dark-bg);
+      color: var(--aws-text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    
+    .status-card {
+      background-color: var(--aws-dark-panel);
+      border-radius: 6px;
+      border: 1px solid var(--aws-dark-border);
+      width: 100%;
+      max-width: 500px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+    }
+    
+    .status-header {
+      background-color: var(--aws-dark-header);
+      color: white;
+      padding: 15px 20px;
+      border-bottom: 1px solid var(--aws-dark-border);
+      border-left: 4px solid var(--aws-button-orange);
+      display: flex;
+      align-items: center;
+    }
+    
+    .status-header h1 {
+      font-size: 1.2rem;
+      font-weight: 500;
+      margin-left: 10px;
+    }
+    
+    .header-icon {
+      color: var(--aws-button-orange);
+      font-size: 1.3rem;
+    }
+    
+    .status-body {
+      padding: 30px 20px;
+      text-align: center;
+    }
+    
+    .status-code {
+      font-size: 3.5rem;
+      font-weight: 700;
+      margin-bottom: 5px;
+      color: var(--aws-success);
+    }
+    
+    .status-message {
+      font-size: 1.2rem;
+      margin-bottom: 15px;
+      color: var(--aws-success);
+    }
+    
+    .status-detail {
+      font-size: 0.9rem;
+      color: var(--aws-text-secondary);
+      margin-bottom: 25px;
+    }
+    
+    .status-time {
+      background-color: var(--aws-dark-element);
+      border-radius: 4px;
+      padding: 8px 12px;
+      display: inline-block;
+      margin-top: 5px;
+      font-size: 0.85rem;
+      color: var(--aws-text-secondary);
+    }
+    
+    .status-icon {
+      font-size: 2.5rem;
+      margin-bottom: 15px;
+      color: var(--aws-success);
+    }
+    
+    .aws-logo {
+      margin-top: 25px;
+      opacity: 0.6;
+      font-size: 0.8rem;
+      color: var(--aws-text-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="status-card">
+    <div class="status-header">
+      <span class="header-icon">⚙️</span>
+      <h1>Health Check</h1>
+    </div>
+    <div class="status-body">
+      <div class="status-icon">✓</div>
+      <div class="status-code">200</div>
+      <div class="status-message">OK</div>
+      <div class="status-detail">Сервіс працює нормально</div>
+      <div class="status-time" id="current-time">30.04.2025 15:32:47</div>
+      <div class="aws-logo">HEALTH CHECK v1.0</div>
+    </div>
+  </div>
+
+  <script>
+    // Функція для оновлення часу
+    function updateTime() {
+      const now = new Date();
+      const formattedDate = now.toLocaleDateString('uk-UA', { 
+        day: '2-digit', 
+        month: '2-digit', 
+        year: 'numeric' 
+      });
+      const formattedTime = now.toLocaleTimeString('uk-UA', { 
+        hour: '2-digit', 
+        minute: '2-digit', 
+        second: '2-digit' 
+      });
+      document.getElementById('current-time').textContent = `${formattedDate} ${formattedTime}`;
+    }
+    
+    // Оновлення часу при завантаженні сторінки
+    updateTime();
+    
+    // Оновлення часу кожну секунду
+    setInterval(updateTime, 1000);
+  </script>
+</body>
+</html>

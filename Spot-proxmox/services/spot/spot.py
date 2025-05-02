@@ -106,24 +106,27 @@ def delete_vm(vm_id):
 
 @app.route("/create", methods=["POST"])
 def create_spot_vm():
-    data = request.get_json()
+    try:
+        data = request.get_json()
 
-    # Витягуємо дані
-    vm_id = data["name"]
-    vm_name = data["name"]
-    vm_template = data["template"]
-    start_time = data["start_time"]
-    end_time = data["end_time"]
-    duration = 1  # Поки що ставимо фіксовано
+        # Витягуємо дані
+        vm_id = data["name"]
+        vm_name = data["name"]
+        vm_template = data["template"]
+        start_time = data["start_time"]
+        end_time = data["end_time"]
+        duration = 1  # Поки що ставимо фіксовано
 
-    # Викликаємо внутрішню функцію
-    result = spot_vm(vm_id, vm_name, vm_template, duration, start_time, end_time)
+        # Викликаємо внутрішню функцію
+        result = spot_vm(vm_id, vm_name, vm_template, duration, start_time, end_time)
 
-    if result is None:
-        return jsonify({"status": "error"}), 500
-    else:
-        return jsonify({"status": "created", "vmid": vm_id}), 201
-
+        if result is None:
+            return jsonify({"status": "error"}), 500
+        else:
+            return jsonify({"status": "created", "vmid": vm_id}), 201
+    except Exception as e:
+        print(f"⚠️ Error creating spot VM: {e}")
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 def spot_vm(vm_id: int, vm_name: str, vm_template: int, duration: int, start_time: str, end_time: str):
     proxmox = get_proxmox()

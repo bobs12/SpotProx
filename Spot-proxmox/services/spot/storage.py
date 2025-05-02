@@ -11,3 +11,10 @@ def load_instances():
 def save_instances(instances):
     with open(DATA_FILE, "w") as f:
         json.dump(instances, f, indent=2)
+
+def get_network():
+    try:
+        with open("network.json", "r") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return {}

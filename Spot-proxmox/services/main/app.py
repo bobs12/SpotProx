@@ -79,7 +79,8 @@ def status(vmid):
 
 @app.route("/health", methods=["GET"])
 def healthcheck():
-    return jsonify({"status": "200"}), 200
+    #return jsonify({"status": "200"}), 200
+    return render_template("healthchek.html", jsonify({"status": "200"}), 200)
 
 
 if __name__ == "__main__":
