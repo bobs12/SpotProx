@@ -3,13 +3,13 @@ FROM python:3.11-slim
 
 WORKDIR /APP
 
-COPY requirements.txt requirements.txt
+COPY requirement.txt requirement.txt
 
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirement.txt
 COPY . .
 
 
-EXPOSE 5000
+EXPOSE 5002
 
 
-CMD [ "python" , "app.py" ]
+CMD [ "python" , "network.py" ]
